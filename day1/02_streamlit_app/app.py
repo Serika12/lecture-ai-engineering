@@ -79,3 +79,17 @@ elif st.session_state.page == "サンプルデータ管理":
 # --- フッターなど（任意） ---
 st.sidebar.markdown("---")
 st.sidebar.info("開発者: [Your Name]")
+
+#####課題用：背景の色を変えてみる！
+st.markdown(
+    """
+    <style>
+    /* Streamlitのメインコンテナに背景色を設定 */
+    .stApp {
+        background-color: #afeeee;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+#####背景が青っぽくなりました^_^

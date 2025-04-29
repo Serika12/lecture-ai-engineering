@@ -27,7 +27,9 @@ config = Config(MODEL_NAME)
 app = FastAPI(
     title="ローカルLLM APIサービス",
     description="transformersモデルを使用したテキスト生成のためのAPI",
-    version="1.0.0"
+    version="1.0.0",
+    ####課題：変更を入れてみる（コードブロックの色を変更）
+    swagger_ui_parameters={"syntaxHighlight": {"theme": "obsidian"}}
 )
 
 # CORSミドルウェアを追加
