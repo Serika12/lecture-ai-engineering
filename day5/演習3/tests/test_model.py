@@ -11,6 +11,7 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
+import shutil
 
 # テスト用データとモデルパスを定義
 DATA_PATH = os.path.join(os.path.dirname(__file__), "../data/Titanic.csv")
@@ -99,6 +100,15 @@ def train_model(sample_data, preprocessor):
     with open(MODEL_PATH, "wb") as f:
         pickle.dump(model, f)
 
+    #課題：モデル比較を行うために、旧モデルをv1として保存する
+    OLD_MODEL_PATH = os.path.join(MODEL_DIR, "titanic_model_v1.pkl")
+    if os.path.exists(MODEL_PATH) and not os.path.exists(OLD_MODEL_PATH):
+        shutil.copy(MODEL_PATH, OLD_MODEL_PATH)
+
+    #新しいモデルを上書き保存
+    with open(MODEL_PATH, "wb") as f:
+        pickle.dump(model, f)
+
     return model, X_test, y_test
 
 
@@ -117,6 +127,9 @@ def test_model_accuracy(train_model):
     y_pred = model.predict(X_test)
     accuracy = accuracy_score(y_test, y_pred)
 
+    #課題：モデルの精度を検証した結果をgithub action上で表示させる
+    print(f"モデルの精度: {accuracy:.4f}")
+
     # Titanicデータセットでは0.75以上の精度が一般的に良いとされる
     assert accuracy >= 0.75, f"モデルの精度が低すぎます: {accuracy}"
 
@@ -131,6 +144,9 @@ def test_model_inference_time(train_model):
     end_time = time.time()
 
     inference_time = end_time - start_time
+    
+    #課題：モデルの推論時間を検証した結果をgithub action上で表示させる
+    print(f"モデルの推論時間: {inference_time:.4f}秒")
 
     # 推論時間が1秒未満であることを確認
     assert inference_time < 1.0, f"推論時間が長すぎます: {inference_time}秒"
@@ -171,3 +187,24 @@ def test_model_reproducibility(sample_data, preprocessor):
     assert np.array_equal(
         predictions1, predictions2
     ), "モデルの予測結果に再現性がありません"
+
+#課題：過去モデルとの性能比較テストを導入
+def test_model_performance_regression(train_model):
+    """過去モデルとの精度比較による性能劣化チェック"""
+
+    model, X_test, y_test = train_model
+    current_accuracy = accuracy_score(y_test, model.predict(X_test))
+
+    old_model_path = os.path.join(MODEL_DIR, "titanic_model_v1.pkl")
+    if not os.path.exists(old_model_path):
+        pytest.skip("過去モデルが存在しないためスキップします")
+
+    with open(old_model_path, "rb") as f:
+        old_model = pickle.load(f)
+
+    old_accuracy = accuracy_score(y_test, old_model.predict(X_test))
+
+    print(f"新しいモデルの精度: {current_accuracy:.4f}")
+    print(f"旧のモデルの精度: {old_accuracy:.4f}")
+
+    assert current_accuracy >= old_accuracy, "モデルの精度が過去より劣化しています"
