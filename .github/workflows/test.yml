@@ -38,4 +38,6 @@ jobs:
         
     - name: Run model tests
       run: |
-        pytest day5/演習3/tests/test_model.py -v
+        pytest day5/演習3/tests/test_model.py -v -s
+
+# test_model.pyの結果にpytestの内容をprintさせるように変更
