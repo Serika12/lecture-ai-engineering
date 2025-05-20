@@ -100,12 +100,12 @@ def train_model(sample_data, preprocessor):
     with open(MODEL_PATH, "wb") as f:
         pickle.dump(model, f)
 
-    #課題：モデル比較を行うために、旧モデルをv1として保存する
+    # 課題：モデル比較を行うために、旧モデルをv1として保存する
     OLD_MODEL_PATH = os.path.join(MODEL_DIR, "titanic_model_v1.pkl")
     if os.path.exists(MODEL_PATH) and not os.path.exists(OLD_MODEL_PATH):
         shutil.copy(MODEL_PATH, OLD_MODEL_PATH)
 
-    #新しいモデルを上書き保存
+    # 新しいモデルを上書き保存
     with open(MODEL_PATH, "wb") as f:
         pickle.dump(model, f)
 
@@ -127,7 +127,7 @@ def test_model_accuracy(train_model):
     y_pred = model.predict(X_test)
     accuracy = accuracy_score(y_test, y_pred)
 
-    #課題：モデルの精度を検証した結果をgithub action上で表示させる
+    # 課題：モデルの精度を検証した結果をgithub action上で表示させる
     print(f"モデルの精度: {accuracy:.4f}")
 
     # Titanicデータセットでは0.75以上の精度が一般的に良いとされる
@@ -144,8 +144,8 @@ def test_model_inference_time(train_model):
     end_time = time.time()
 
     inference_time = end_time - start_time
-    
-    #課題：モデルの推論時間を検証した結果をgithub action上で表示させる
+
+    # 課題：モデルの推論時間を検証した結果をgithub action上で表示させる
     print(f"モデルの推論時間: {inference_time:.4f}秒")
 
     # 推論時間が1秒未満であることを確認
@@ -188,7 +188,8 @@ def test_model_reproducibility(sample_data, preprocessor):
         predictions1, predictions2
     ), "モデルの予測結果に再現性がありません"
 
-#課題：過去モデルとの性能比較テストを導入
+
+# 課題：過去モデルとの性能比較テストを導入
 def test_model_performance_regression(train_model):
     """過去モデルとの精度比較による性能劣化チェック"""
 
